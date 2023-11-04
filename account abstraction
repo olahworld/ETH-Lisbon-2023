@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract AccountAbstractionExample {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can execute this");
+        _;
+    }
+
+    function deposit() public payable {
+        // This function allows anyone to send funds to the contract.
+    }
+
+    function executeTransaction(uint256 gasPrice, address target, bytes memory data) public onlyOwner returns (bool, bytes memory) {
+        // This function allows the owner to execute transactions using account abstraction.
+        (bool success, bytes memory result) = target.call{gas: gasleft(), value: msg.value, gasprice: gasPrice}(data);
+        require(success, "Transaction execution failed");
+        return (success, result);
+    }
+}
